@@ -1,5 +1,5 @@
 # Builds sik-radio-tools and deploys to GitHub Pages.
-# One-time: Repo Settings → Pages → Build and deployment → Source: GitHub Actions
+# REQUIRED once: Settings → Pages → Source: GitHub Actions (creates the Pages site; configure-pages action removed to avoid API 404 before this is done).
 # Optional: Settings → Actions → General → Workflow permissions → Read and write permissions
 
 name: Deploy GitHub Pages
@@ -44,9 +44,6 @@ jobs:
           mkdir -p _site
           cp index.html _site/
           cp -r dist _site/
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
