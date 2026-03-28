@@ -38,8 +38,9 @@ Build with `npm run build`, then upload those paths or use the GitHub Actions wo
 ### GitHub Pages (this repository)
 
 1. **One-time:** In the repo on GitHub, open **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”). Save if prompted.
-2. Every push to **`main`** runs [`.github/workflows/github-pages.yml`](https://github.com/JamesM9/SIK-Radio-Tools/blob/main/.github/workflows/github-pages.yml), which builds `sik-radio-tools/` and publishes `index.html` + `dist/`.
-3. After a successful run (**Actions** tab → **Deploy GitHub Pages**), the app is served at:
+2. **Workflow token (if deploy still fails):** **Settings → Actions → General** → **Workflow permissions** → select **Read and write permissions**, then **Save**. This lets `GITHUB_TOKEN` publish to Pages.
+3. Every push to **`main`** runs [`.github/workflows/github-pages.yml`](https://github.com/JamesM9/SIK-Radio-Tools/blob/main/.github/workflows/github-pages.yml), which builds `sik-radio-tools/` and publishes `index.html` + `dist/`.
+4. After a successful run (**Actions** tab → **Deploy GitHub Pages**), the app is served at:
 
    **https://jamesm9.github.io/SIK-Radio-Tools/**
 
