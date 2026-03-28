@@ -2,6 +2,8 @@
 
 A static **web app** for configuring SiK telemetry radios (900 MHz / 433 MHz) from a desktop browser using the **Web Serial API**. Host it on GitHub Pages, any static file host, or run it locally—no Chrome Web Store or extension install required.
 
+**Repository:** [github.com/JamesM9/SIK-Radio-Tools](https://github.com/JamesM9/SIK-Radio-Tools)
+
 ## Requirements
 
 - **Browser**: Chromium-based desktop browser (Chrome, Edge, Brave, etc.) with Web Serial
