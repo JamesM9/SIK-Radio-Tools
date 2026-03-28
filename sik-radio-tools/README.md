@@ -1,0 +1,67 @@
+# SiK Radio Tools
+
+A static **web app** for configuring SiK telemetry radios (900 MHz / 433 MHz) from a desktop browser using the **Web Serial API**. Host it on GitHub Pages, any static file host, or run it locally—no Chrome Web Store or extension install required.
+
+## Requirements
+
+- **Browser**: Chromium-based desktop browser (Chrome, Edge, Brave, etc.) with Web Serial
+- **Context**: **HTTPS** in production, or `http://localhost` for local development (required for Web Serial)
+- **OS**: Windows, macOS, or Linux (desktop; Web Serial on mobile is limited)
+
+## Run locally
+
+```bash
+cd sik-radio-tools
+npm install
+npm run build
+```
+
+Serve the folder over HTTP (ES modules need a real origin):
+
+```bash
+npx --yes serve .
+```
+
+Open the URL shown (e.g. `http://localhost:3000`). Use **Chrome or Edge** on desktop with the radio connected via USB.
+
+## Deploy (static hosting)
+
+The published site needs exactly:
+
+- `index.html`
+- `dist/` (compiled JS, CSS, and `dist/assets/`)
+
+Build with `npm run build`, then upload those paths or use the GitHub Actions workflow in `.github/workflows/github-pages.yml` (runs on push to `main`).
+
+Safari and Firefox do not expose Web Serial to pages the same way; the app shows a warning when `navigator.serial` is missing.
+
+## Features
+
+- **Connection**: USB serial via Web Serial, configurable baud (default 57600)
+- **Settings**: Parameter editor, load/save to radio, export/import JSON, clone to remote
+- **Terminal**: AT command terminal with history
+- **Firmware**: Flash SiK `.hex` via bootloader (see Firmware tab for file prep notes)
+- **Diagnostics / Profiles / Advanced**: As implemented in the UI
+- **Demo Mode**: UI testing without hardware
+
+## Project structure
+
+```
+sik-radio-tools/
+├── index.html
+├── src/                    # TypeScript sources
+├── scripts/                # copy-assets, generate-icons
+├── tests/
+├── samples/                # Example config JSONs
+└── assets/icons/           # Copied into dist/assets for favicon
+```
+
+## Limitations
+
+- **Web Serial only**: No TCP/Bluetooth serial in this build
+- **Desktop-focused**: Use a desktop browser with Web Serial for real hardware
+- **Port access**: User gesture (click) required to open the serial port picker
+
+## License
+
+MIT

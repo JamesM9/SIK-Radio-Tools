@@ -1,0 +1,17 @@
+# Dependencies & build output
+**/node_modules/
+**/dist/
+**/_site/
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE (optional local settings)
+.cursor/
+
+# Root-level stray artifacts (no package.json at repo root)
+/package-lock.json
+*.zip
+Gemini*.png
