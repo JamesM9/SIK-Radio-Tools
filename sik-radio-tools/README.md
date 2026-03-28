@@ -35,6 +35,16 @@ The published site needs exactly:
 
 Build with `npm run build`, then upload those paths or use the GitHub Actions workflow in `.github/workflows/github-pages.yml` (runs on push to `main`).
 
+### GitHub Pages (this repository)
+
+1. **One-time:** In the repo on GitHub, open **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”). Save if prompted.
+2. Every push to **`main`** runs [`.github/workflows/github-pages.yml`](https://github.com/JamesM9/SIK-Radio-Tools/blob/main/.github/workflows/github-pages.yml), which builds `sik-radio-tools/` and publishes `index.html` + `dist/`.
+3. After a successful run (**Actions** tab → **Deploy GitHub Pages**), the app is served at:
+
+   **https://jamesm9.github.io/SIK-Radio-Tools/**
+
+   (Use **Chrome or Edge** on desktop; the site must be served over **HTTPS** for Web Serial.)
+
 Safari and Firefox do not expose Web Serial to pages the same way; the app shows a warning when `navigator.serial` is missing.
 
 ## Features
