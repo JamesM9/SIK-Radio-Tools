@@ -3,8 +3,9 @@
 ## Stack Choice
 
 - **Vanilla TypeScript + HTML + CSS** (no React): Small bundle, simple static hosting (GitHub Pages, etc.). All code is packaged locally; no remote scripts.
-- **Web Serial API** for USB serial; transport layer is abstracted for future TCP/Bluetooth support.
-- **localStorage** for settings and saved profiles in the browser.
+- **Web Serial API** for USB serial in the browser; **Tauri + `serialport`** for the desktop app (Windows/macOS/Linux).
+- **Transport abstraction** (`src/transport/`): `SerialTransport` (web), `TauriSerialTransport` (desktop), `MockTransport` (demo). Same UI/protocol stack for both.
+- **localStorage** for settings and saved profiles in the browser / webview.
 
 ## File Tree
 
@@ -18,6 +19,7 @@ sik-radio-tools/
 ├── DOCUMENTATION.md
 ├── scripts/
 │   ├── copy-assets.js
+│   ├── prepare-desktop.js   # Stage index.html + dist for Tauri
 │   └── generate-icons.js
 ├── src/
 │   ├── app.ts              # Entry, app shell, tabs
@@ -27,6 +29,7 @@ sik-radio-tools/
 │   ├── ui/
 │   │   ├── app.ts           # Main app logic
 │   │   ├── connection.ts
+│   │   ├── port-picker.ts   # Desktop COM/tty picker modal
 │   │   ├── settings.ts
 │   │   ├── terminal.ts
 │   │   ├── diagnostics.ts
@@ -36,6 +39,8 @@ sik-radio-tools/
 │   ├── transport/
 │   │   ├── types.ts
 │   │   ├── serial.ts        # Web Serial
+│   │   ├── tauri-serial.ts  # Desktop native serial (Tauri IPC)
+│   │   ├── platform.ts      # Detect Tauri vs browser
 │   │   ├── mock.ts          # Demo mode
 │   │   └── index.ts
 │   ├── protocol/
@@ -50,6 +55,9 @@ sik-radio-tools/
 │   │   └── profiles.ts
 │   └── diagnostics/
 │       └── logger.ts
+├── src-tauri/               # Tauri desktop shell
+│   ├── src/serial.rs        # list/open/read/write OS serial ports
+│   └── tauri.conf.json
 ├── tests/
 │   ├── at-parser.test.ts
 │   ├── line-buffer.test.ts

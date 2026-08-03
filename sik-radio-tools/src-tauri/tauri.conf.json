@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "SiK Radio Tools",
+  "version": "1.0.1",
+  "identifier": "com.jamesm9.sik-radio-tools",
+  "build": {
+    "beforeDevCommand": "npm run build:desktop && npx --yes serve -l 1420 desktop-www",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build:desktop",
+    "frontendDist": "../desktop-www"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "SiK Radio Tools",
+        "width": 1100,
+        "height": 820,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Utility",
+    "shortDescription": "Configure SiK telemetry radios over USB serial",
+    "longDescription": "Desktop app for configuring SiK 900 MHz / 433 MHz telemetry radios via native serial ports on Windows, macOS, and Linux."
+  }
+}

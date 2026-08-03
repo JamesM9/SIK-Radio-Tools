@@ -3,7 +3,13 @@
  */
 
 import type { AppState, ConnectionState } from '../types.js';
-import { SerialTransport, MockTransport } from '../transport/index.js';
+import {
+  SerialTransport,
+  MockTransport,
+  TauriSerialTransport,
+  isDesktopApp,
+} from '../transport/index.js';
+import type { Transport } from '../transport/types.js';
 import { SiKRadioClient } from '../protocol/sik-client.js';
 import { saveSettings } from '../persistence/storage.js';
 import { logInfo, logError } from '../diagnostics/logger.js';
@@ -66,20 +72,28 @@ function getStatusText(s: ConnectionState): string {
   }
 }
 
+function createHardwareTransport(): Transport {
+  return isDesktopApp() ? new TauriSerialTransport() : new SerialTransport();
+}
+
 async function handleConnect(state: AppState, setState: (p: Partial<AppState>) => void): Promise<void> {
   setState({ connectionState: 'connecting' });
   logInfo('Connecting...', 'connection');
 
   try {
-    const TransportClass = state.demoMode ? MockTransport : SerialTransport;
-    const transport = new TransportClass();
+    const transport: Transport = state.demoMode ? new MockTransport() : createHardwareTransport();
 
     if (state.demoMode) {
       await transport.open({ baudRate: state.baudRate });
     } else {
-      const hadPort = await transport.reconnectKnownPort();
-      if (!hadPort) {
+      // Always show the port picker on desktop so users can choose among COM/tty devices.
+      if (isDesktopApp()) {
         await transport.requestPort();
+      } else {
+        const hadPort = await transport.reconnectKnownPort();
+        if (!hadPort) {
+          await transport.requestPort();
+        }
       }
       await transport.open({ baudRate: state.baudRate });
     }

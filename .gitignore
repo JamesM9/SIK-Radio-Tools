@@ -1,7 +1,9 @@
 # Dependencies & build output
 **/node_modules/
 **/dist/
+**/desktop-www/
 **/_site/
+**/src-tauri/target/
 
 # Logs & OS
 *.log

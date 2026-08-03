@@ -4,6 +4,7 @@
 
 import type { AppState } from '../types.js';
 import type { Transport } from '../transport/types.js';
+import { isDesktopApp } from '../transport/platform.js';
 import { SiKRadioClient } from '../protocol/sik-client.js';
 import { getSettings, saveSettings } from '../persistence/storage.js';
 import { showToast } from './toast.js';
@@ -64,19 +65,24 @@ function webSerialSupported(): boolean {
   return typeof navigator !== 'undefined' && !!navigator.serial;
 }
 
+function hardwareSerialAvailable(): boolean {
+  return isDesktopApp() || webSerialSupported();
+}
+
 function render(): void {
   const root = getRoot();
+  const desktop = isDesktopApp();
 
   root.innerHTML = `
     ${
-      webSerialSupported()
+      hardwareSerialAvailable()
         ? ''
         : `<div class="browser-warning" role="alert">
-      Web Serial is not available in this browser. Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop over <strong>HTTPS</strong> (or localhost) to connect USB radios.
+      Web Serial is not available in this browser. Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop over <strong>HTTPS</strong> (or localhost), or run the <strong>desktop app</strong> for Windows, macOS, or Linux.
     </div>`
     }
     <header class="app-header">
-      <h1 class="app-title">SiK Radio Tools</h1>
+      <h1 class="app-title">SiK Radio Tools${desktop ? ' <span class="app-badge">Desktop</span>' : ''}</h1>
       <label class="btn">
         <input type="checkbox" id="demo-mode" ${state.demoMode ? 'checked' : ''}>
         Demo Mode
