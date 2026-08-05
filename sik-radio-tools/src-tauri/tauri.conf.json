@@ -26,7 +26,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["nsis", "msi", "dmg", "app", "deb", "rpm", "appimage"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -36,6 +36,36 @@
     ],
     "category": "Utility",
     "shortDescription": "Configure SiK telemetry radios over USB serial",
-    "longDescription": "Desktop app for configuring SiK 900 MHz / 433 MHz telemetry radios via native serial ports on Windows, macOS, and Linux."
+    "longDescription": "Desktop app for configuring SiK 900 MHz / 433 MHz telemetry radios via native serial ports on Windows, macOS, and Linux.",
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "dmg": {
+        "appPosition": {
+          "x": 180,
+          "y": 170
+        },
+        "applicationFolderPosition": {
+          "x": 480,
+          "y": 170
+        }
+      }
+    },
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0"]
+      },
+      "rpm": {
+        "depends": ["webkit2gtk4.1", "gtk3"]
+      },
+      "appimage": {
+        "bundleMediaFramework": false
+      }
+    }
   }
 }
