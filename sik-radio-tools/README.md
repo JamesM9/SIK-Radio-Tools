@@ -51,6 +51,20 @@ npm run desktop:build    # platform installers under src-tauri/target/release/bu
 
 On first connect, pick the radio’s COM port (Windows) or `/dev/tty.*` / `/dev/ttyUSB*` device (macOS/Linux) from the port dialog.
 
+### Download installers
+
+CI builds installers for all desktop platforms:
+
+| Platform | Installer formats |
+|---|---|
+| Windows | NSIS `.exe`, `.msi` |
+| macOS | `.dmg` (Apple Silicon + Intel) |
+| Linux | `.deb`, `.rpm`, `.AppImage` |
+
+**Build now (GitHub Actions):** open **Actions → Build Desktop Installers → Run workflow**, then download the artifacts from the completed run.
+
+**Publish a release:** push a version tag (for example `v1.0.1`) and the same workflow attaches installers to a draft GitHub Release.
+
 ### Platform notes
 
 | OS | Typical port names | Notes |
