@@ -20,6 +20,7 @@ sik-radio-tools/
 ├── scripts/
 │   ├── copy-assets.js
 │   ├── prepare-desktop.js   # Stage index.html + dist for Tauri
+│   ├── prepare-android.js   # USB Host overlays after `tauri android init`
 │   └── generate-icons.js
 ├── src/
 │   ├── app.ts              # Entry, app shell, tabs
