@@ -1,10 +1,12 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default capabilities for SiK Radio Tools desktop",
+  "description": "Default capabilities for SiK Radio Tools (desktop + mobile)",
   "windows": ["main"],
   "permissions": [
     "core:default",
-    "core:event:default"
+    "core:event:default",
+    "os:default",
+    "serialplugin:default"
   ]
 }

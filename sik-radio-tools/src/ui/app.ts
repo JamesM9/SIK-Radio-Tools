@@ -4,7 +4,14 @@
 
 import type { AppState } from '../types.js';
 import type { Transport } from '../transport/types.js';
-import { isDesktopApp } from '../transport/platform.js';
+import {
+  isDesktopApp,
+  isTauriApp,
+  isAndroidApp,
+  isIosApp,
+  getAppPlatform,
+  resolveAppPlatform,
+} from '../transport/platform.js';
 import { SiKRadioClient } from '../protocol/sik-client.js';
 import { getSettings, saveSettings } from '../persistence/storage.js';
 import { showToast } from './toast.js';
@@ -66,23 +73,43 @@ function webSerialSupported(): boolean {
 }
 
 function hardwareSerialAvailable(): boolean {
-  return isDesktopApp() || webSerialSupported();
+  return isTauriApp() || webSerialSupported();
+}
+
+function platformBadge(): string {
+  const platform = getAppPlatform();
+  if (platform === 'android') return ' <span class="app-badge">Android</span>';
+  if (platform === 'ios') return ' <span class="app-badge">iOS</span>';
+  if (platform === 'desktop' || isDesktopApp()) return ' <span class="app-badge">Desktop</span>';
+  return '';
+}
+
+function platformWarning(): string {
+  if (hardwareSerialAvailable()) {
+    if (isIosApp()) {
+      return `<div class="browser-warning" role="status">
+        iOS cannot use generic USB-serial FTDI adapters. Connect a <strong>BLE UART bridge</strong> wired to your SiK radio, or use Demo Mode.
+      </div>`;
+    }
+    if (isAndroidApp()) {
+      return `<div class="browser-warning" role="status">
+        Plug the radio in with a <strong>USB-OTG</strong> cable/adapter, grant USB permission when prompted, then tap Connect.
+      </div>`;
+    }
+    return '';
+  }
+  return `<div class="browser-warning" role="alert">
+      Web Serial is not available in this browser. Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop over <strong>HTTPS</strong> (or localhost), the <strong>desktop app</strong>, or the <strong>Android / iOS</strong> app builds.
+    </div>`;
 }
 
 function render(): void {
   const root = getRoot();
-  const desktop = isDesktopApp();
 
   root.innerHTML = `
-    ${
-      hardwareSerialAvailable()
-        ? ''
-        : `<div class="browser-warning" role="alert">
-      Web Serial is not available in this browser. Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop over <strong>HTTPS</strong> (or localhost), or run the <strong>desktop app</strong> for Windows, macOS, or Linux.
-    </div>`
-    }
+    ${platformWarning()}
     <header class="app-header">
-      <h1 class="app-title">SiK Radio Tools${desktop ? ' <span class="app-badge">Desktop</span>' : ''}</h1>
+      <h1 class="app-title">SiK Radio Tools${platformBadge()}</h1>
       <label class="btn">
         <input type="checkbox" id="demo-mode" ${state.demoMode ? 'checked' : ''}>
         Demo Mode
@@ -168,10 +195,14 @@ let appRoot: HTMLElement | null = null;
 
 export function renderApp(root: HTMLElement): void {
   appRoot = root;
-  getSettings().then((s) => {
+  void (async () => {
+    if (isTauriApp()) {
+      await resolveAppPlatform();
+    }
+    const s = await getSettings();
     setState({ baudRate: s.baudRate, darkMode: s.darkMode });
     render();
-  });
+  })();
 }
 
 function getRoot(): HTMLElement {

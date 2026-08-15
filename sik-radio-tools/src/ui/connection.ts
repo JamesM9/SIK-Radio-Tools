@@ -7,7 +7,12 @@ import {
   SerialTransport,
   MockTransport,
   TauriSerialTransport,
-  isDesktopApp,
+  PluginSerialTransport,
+  BleSerialTransport,
+  isTauriApp,
+  isAndroidApp,
+  isIosApp,
+  getAppPlatform,
 } from '../transport/index.js';
 import type { Transport } from '../transport/types.js';
 import { SiKRadioClient } from '../protocol/sik-client.js';
@@ -73,12 +78,26 @@ function getStatusText(s: ConnectionState): string {
 }
 
 function createHardwareTransport(): Transport {
-  return isDesktopApp() ? new TauriSerialTransport() : new SerialTransport();
+  if (!isTauriApp()) {
+    return new SerialTransport();
+  }
+  // Android: USB Host / OTG via serialplugin. iOS: BLE UART bridge (no generic USB-serial).
+  if (isAndroidApp()) {
+    return new PluginSerialTransport();
+  }
+  if (isIosApp()) {
+    return new BleSerialTransport();
+  }
+  return new TauriSerialTransport();
+}
+
+function useNativePortPicker(): boolean {
+  return isTauriApp();
 }
 
 async function handleConnect(state: AppState, setState: (p: Partial<AppState>) => void): Promise<void> {
   setState({ connectionState: 'connecting' });
-  logInfo('Connecting...', 'connection');
+  logInfo(`Connecting (${getAppPlatform()})...`, 'connection');
 
   try {
     const transport: Transport = state.demoMode ? new MockTransport() : createHardwareTransport();
@@ -86,8 +105,8 @@ async function handleConnect(state: AppState, setState: (p: Partial<AppState>) =
     if (state.demoMode) {
       await transport.open({ baudRate: state.baudRate });
     } else {
-      // Always show the port picker on desktop so users can choose among COM/tty devices.
-      if (isDesktopApp()) {
+      // Always show the picker in Tauri so users can choose among USB / BLE devices.
+      if (useNativePortPicker()) {
         await transport.requestPort();
       } else {
         const hadPort = await transport.reconnectKnownPort();

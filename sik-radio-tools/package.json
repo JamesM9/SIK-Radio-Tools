@@ -1,7 +1,7 @@
 {
   "name": "sik-radio-tools",
   "version": "1.0.1",
-  "description": "SiK telemetry radio configurator — web (Web Serial) and desktop (Tauri native serial)",
+  "description": "SiK telemetry radio configurator — web, desktop, Android USB, and iOS BLE",
   "private": true,
   "scripts": {
     "build": "tsc && npm run copy-assets",
@@ -12,12 +12,24 @@
     "test:watch": "vitest",
     "tauri": "tauri",
     "desktop:dev": "tauri dev",
-    "desktop:build": "tauri build"
+    "desktop:build": "tauri build",
+    "mobile:android:init": "tauri android init --ci && node scripts/prepare-android.js",
+    "mobile:android:prepare": "node scripts/prepare-android.js",
+    "mobile:android:dev": "npm run build:desktop && node scripts/prepare-android.js && tauri android dev",
+    "mobile:android:build": "npm run build:desktop && node scripts/prepare-android.js && tauri android build",
+    "mobile:ios:init": "tauri ios init --ci",
+    "mobile:ios:dev": "npm run build:desktop && tauri ios dev",
+    "mobile:ios:build": "npm run build:desktop && tauri ios build"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
     "jimp": "^1.6.0",
     "typescript": "^5.3.0",
     "vitest": "^1.2.0"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-os": "^2.3.2",
+    "tauri-plugin-serialplugin-api": "^2.24.1"
   }
 }
