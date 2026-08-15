@@ -35,8 +35,8 @@
       "icons/icon.ico"
     ],
     "category": "Utility",
-    "shortDescription": "Configure SiK telemetry radios over USB serial",
-    "longDescription": "Desktop app for configuring SiK 900 MHz / 433 MHz telemetry radios via native serial ports on Windows, macOS, and Linux.",
+    "shortDescription": "Configure SiK telemetry radios over USB / BLE",
+    "longDescription": "Configure SiK 900 MHz / 433 MHz telemetry radios via native serial on Windows, macOS, and Linux; USB Host on Android; and BLE UART on iOS.",
     "windows": {
       "nsis": {
         "installMode": "currentUser",

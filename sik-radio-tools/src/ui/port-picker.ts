@@ -20,20 +20,31 @@ function formatPort(port: PickerPort): string {
   return `${label}${ids}`;
 }
 
+export interface PortPickerOptions {
+  title?: string;
+  hint?: string;
+  emptyHint?: string;
+}
+
 /**
  * Show a modal listing serial ports. Resolves with the selected path, or rejects if cancelled.
  */
-export function pickSerialPort(ports: PickerPort[]): Promise<string> {
+export function pickSerialPort(ports: PickerPort[], options: PortPickerOptions = {}): Promise<string> {
+  const title = options.title ?? 'Select serial port';
+  const hint = options.hint ?? 'Choose the USB COM / tty port for your SiK radio.';
+  const emptyHint =
+    options.emptyHint ?? 'No serial ports found. Plug in the radio (USB) and click Refresh.';
+
   return new Promise((resolve, reject) => {
     const overlay = document.createElement('div');
     overlay.className = 'port-picker-overlay';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'Select serial port');
+    overlay.setAttribute('aria-label', title);
 
-    const options =
+    const optionsHtml =
       ports.length === 0
-        ? `<p class="form-hint">No serial ports found. Plug in the radio (USB) and click Refresh.</p>`
+        ? `<p class="form-hint">${escapeHtml(emptyHint)}</p>`
         : `<select id="port-picker-select" size="${Math.min(8, Math.max(3, ports.length))}">
             ${ports
               .map(
@@ -47,9 +58,9 @@ export function pickSerialPort(ports: PickerPort[]): Promise<string> {
 
     overlay.innerHTML = `
       <div class="port-picker-dialog">
-        <h2>Select serial port</h2>
-        <p class="form-hint">Choose the USB COM / tty port for your SiK radio.</p>
-        <div id="port-picker-list">${options}</div>
+        <h2>${escapeHtml(title)}</h2>
+        <p class="form-hint">${escapeHtml(hint)}</p>
+        <div id="port-picker-list">${optionsHtml}</div>
         <div class="port-picker-actions">
           <button type="button" class="btn" id="port-picker-refresh">Refresh</button>
           <button type="button" class="btn" id="port-picker-cancel">Cancel</button>

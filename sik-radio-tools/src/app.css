@@ -447,7 +447,44 @@ textarea:focus {
 
 /* Responsive */
 @media (max-width: 768px) {
-  #app { padding: 16px; }
-  .connection-bar { flex-direction: column; align-items: stretch; }
+  #app { padding: 12px; }
+  .app-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .app-title {
+    font-size: 20px;
+    width: 100%;
+  }
+  .connection-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .connection-bar .btn,
+  .connection-bar select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 4px;
+  }
+  .tab {
+    min-height: 44px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .port-picker-dialog {
+    padding: 16px;
+  }
+  .port-picker-actions {
+    flex-wrap: wrap;
+  }
+  .port-picker-actions .btn {
+    min-height: 44px;
+    flex: 1 1 auto;
+  }
   .param-grid { grid-template-columns: 1fr; }
 }

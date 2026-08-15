@@ -3,7 +3,9 @@
 Configure SiK telemetry radios (900 MHz / 433 MHz) from:
 
 1. A static **web app** using the **Web Serial API** (Chrome/Edge/Brave, or Firefox 151+), or
-2. A native **desktop app** (Windows, macOS, Linux) using **Tauri + OS serial ports** — no browser Web Serial required
+2. A native **desktop app** (Windows, macOS, Linux) using **Tauri + OS serial ports**, or
+3. An **Android** app using **USB OTG / USB Host** serial, or
+4. An **iOS** app using a **BLE UART bridge** (Apple does not allow generic FTDI USB-serial)
 
 Host the web build on GitHub Pages, any static file host, or run it locally—no Chrome Web Store or extension install required.
 
@@ -21,6 +23,18 @@ Host the web build on GitHub Pages, any static file host, or run it locally—no
 
 - **OS**: Windows 10+, macOS 11+, or modern Linux (x64/arm64)
 - **Build tools** (developers): Node.js 20+, Rust via [rustup](https://rustup.rs/) (stable), and [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/). On Linux also install `libudev-dev` (needed by the `serialport` crate).
+
+### Android app
+
+- **Device**: Phone/tablet with **USB Host / OTG** support
+- **Cable**: USB-OTG adapter + radio USB cable (SiK / Holybro / 3DR FTDI `0x0403:0x6015` preferred)
+- **Build tools**: Android SDK + NDK, Rust Android targets (`aarch64-linux-android`, …), JDK 17+
+
+### iOS / iPadOS app
+
+- **macOS + Xcode** required to generate and build the iOS project (`tauri ios …` is not available on Linux)
+- **Radio link**: BLE-UART bridge wired to radio TX/RX (generic USB FTDI is **not** available to third-party iOS apps)
+- See [`src-tauri/mobile/ios/README.md`](src-tauri/mobile/ios/README.md)
 
 ## Run the web app locally
 
@@ -73,6 +87,32 @@ CI builds installers for all desktop platforms:
 | macOS | `/dev/tty.usbserial-*` | Grant serial access if prompted |
 | Linux | `/dev/ttyUSB0`, `/dev/ttyACM0` | Your user may need membership in the `dialout` (or `uucp`) group |
 
+## Android app (USB OTG)
+
+```bash
+cd sik-radio-tools
+npm install
+npm run mobile:android:init     # once: generate gen/android + USB overlays
+npm run mobile:android:dev      # device/emulator
+npm run mobile:android:build    # APK / AAB
+```
+
+`gen/android` is generated (gitignored). After regenerating, always run `npm run mobile:android:prepare` so USB Host permissions, `device_filter.xml` (SiK FTDI VID/PID), and JitPack are applied.
+
+On connect: plug the radio in with USB-OTG → grant the USB permission dialog → pick the device → configure as usual.
+
+## iOS app (BLE UART)
+
+```bash
+# On macOS only:
+cd sik-radio-tools
+npm install
+npm run mobile:ios:init
+npm run mobile:ios:dev
+```
+
+iOS cannot open generic FTDI USB adapters. Use a BLE UART bridge (Nordic UART Service or equivalent) wired to the radio, then select that BLE device in the app picker. CoreBluetooth wiring is documented under `src-tauri/mobile/ios/`.
+
 ## Deploy (static hosting)
 
 The published web site needs exactly:
@@ -97,7 +137,7 @@ Safari does not implement Web Serial; use the desktop app there, or Chrome/Edge/
 
 ## Features
 
-- **Connection**: USB serial via Web Serial (web) or native serial (desktop), configurable baud (default 57600)
+- **Connection**: USB serial via Web Serial (web), native serial (desktop), USB Host (Android), BLE UART (iOS)
 - **Settings**: Parameter editor, load/save to radio, export/import JSON, clone to remote
 - **Terminal**: AT command terminal with history
 - **Firmware**: Flash SiK `.hex` via bootloader (see Firmware tab for file prep notes)
@@ -110,8 +150,9 @@ Safari does not implement Web Serial; use the desktop app there, or Chrome/Edge/
 sik-radio-tools/
 ├── index.html
 ├── src/                    # TypeScript sources (shared UI + protocol)
-├── src-tauri/              # Tauri desktop shell + native serial
-├── scripts/                # copy-assets, prepare-desktop, generate-icons
+├── src-tauri/              # Tauri desktop + mobile shell
+│   └── mobile/             # Android USB overlays + iOS BLE notes
+├── scripts/                # copy-assets, prepare-desktop, prepare-android, …
 ├── tests/
 ├── samples/                # Example config JSONs
 └── assets/icons/           # Copied into dist/assets for favicon
@@ -120,9 +161,11 @@ sik-radio-tools/
 ## Limitations
 
 - **Web build**: Relies on Web Serial where the browser provides it
-- **Desktop build**: Native USB serial on Windows, macOS, and Linux (not a substitute for iOS/Android USB accessory stacks yet)
-- **No TCP/Bluetooth serial** in this build
-- **Port access**: User gesture (click) required to open the serial port picker
+- **Desktop build**: Native USB serial on Windows, macOS, and Linux
+- **Android build**: Requires USB Host/OTG; user must grant USB permission
+- **iOS build**: No generic USB-serial; use BLE UART (or the macOS desktop app for USB)
+- **No TCP serial** in this build
+- **Port access**: User gesture (click/tap) required to open the port/device picker
 
 ## License
 

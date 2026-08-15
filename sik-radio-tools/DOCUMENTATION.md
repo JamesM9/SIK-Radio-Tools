@@ -3,8 +3,8 @@
 ## Stack Choice
 
 - **Vanilla TypeScript + HTML + CSS** (no React): Small bundle, simple static hosting (GitHub Pages, etc.). All code is packaged locally; no remote scripts.
-- **Web Serial API** for USB serial in the browser; **Tauri + `serialport`** for the desktop app (Windows/macOS/Linux).
-- **Transport abstraction** (`src/transport/`): `SerialTransport` (web), `TauriSerialTransport` (desktop), `MockTransport` (demo). Same UI/protocol stack for both.
+- **Web Serial API** for USB serial in the browser; **Tauri + `serialport`** for desktop; **tauri-plugin-serialplugin** for Android USB Host; **BLE UART** commands for iOS.
+- **Transport abstraction** (`src/transport/`): `SerialTransport` (web), `TauriSerialTransport` (desktop), `PluginSerialTransport` (Android USB), `BleSerialTransport` (iOS), `MockTransport` (demo). Same UI/protocol stack everywhere.
 - **localStorage** for settings and saved profiles in the browser / webview.
 
 ## File Tree
@@ -38,10 +38,12 @@ sik-radio-tools/
 │   │   └── toast.ts
 │   ├── transport/
 │   │   ├── types.ts
-│   │   ├── serial.ts        # Web Serial
-│   │   ├── tauri-serial.ts  # Desktop native serial (Tauri IPC)
-│   │   ├── platform.ts      # Detect Tauri vs browser
-│   │   ├── mock.ts          # Demo mode
+│   │   ├── serial.ts         # Web Serial
+│   │   ├── tauri-serial.ts   # Desktop native serial (Tauri IPC)
+│   │   ├── plugin-serial.ts  # Android USB via serialplugin
+│   │   ├── ble-serial.ts     # iOS BLE UART bridge
+│   │   ├── platform.ts       # web / desktop / android / ios
+│   │   ├── mock.ts           # Demo mode
 │   │   └── index.ts
 │   ├── protocol/
 │   │   ├── line-buffer.ts
@@ -55,8 +57,11 @@ sik-radio-tools/
 │   │   └── profiles.ts
 │   └── diagnostics/
 │       └── logger.ts
-├── src-tauri/               # Tauri desktop shell
-│   ├── src/serial.rs        # list/open/read/write OS serial ports
+├── src-tauri/               # Tauri desktop + mobile shell
+│   ├── src/serial.rs        # Desktop OS serial ports
+│   ├── src/ble.rs           # BLE UART invoke surface (iOS path)
+│   ├── mobile/android/      # USB Host overlays (device_filter, …)
+│   ├── mobile/ios/          # Apple BLE notes
 │   └── tauri.conf.json
 ├── tests/
 │   ├── at-parser.test.ts
